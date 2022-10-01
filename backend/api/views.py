@@ -5,14 +5,15 @@ from django.forms.models import model_to_dict
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from products.serializers import ProductSerializer
 
 from products.models import Product
 
 @api_view(["GET"])
 def api_home( request: HttpRequest , *args, **kwargs):
     model_data = Product.objects.all().order_by("?").first()
-    
-    data = model_to_dict(model_data, exclude=['id'])
-    data['sale_price'] = model_data.sale_price
+    data = {}
+    if model_data:
+        data = ProductSerializer(model_data).data
     
     return Response(data)
